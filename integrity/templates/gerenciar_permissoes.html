@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-people"></i> Gerenciar Permissões</h1>
+    <small class="text-muted">Documento: {{ documento.titulo }}</small>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Adicionar/Editar Permissão</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_usuario" class="form-label">Usuário</label>
+                        <select class="form-select" id="id_usuario" name="usuario" required>
+                            <option value="">Selecione um usuário</option>
+                            {% for usuario in todos_usuarios %}
+                                <option value="{{ usuario.id }}">{{ usuario.nome_usuario }} ({{ usuario.email_usuario }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="id_pode_visualizar" name="pode_visualizar">
+                        <label class="form-check-label" for="id_pode_visualizar">Pode Visualizar</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="id_pode_assinar" name="pode_assinar">
+                        <label class="form-check-label" for="id_pode_assinar">Pode Assinar</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Salvar Permissão
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Permissões Concedidas</h5>
+            </div>
+            <div class="card-body">
+                {% if permissoes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Visualizar</th>
+                                <th>Assinar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for permissao in permissoes %}
+                            <tr>
+                                <td>{{ permissao.usuario.nome_usuario }}</td>
+                                <td>
+                                    {% if permissao.pode_visualizar %}
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    {% else %}
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if permissao.pode_assinar %}
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    {% else %}
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    Nenhuma permissão concedida ainda.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'lista_documentos' %}" class="btn btn-outline-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Voltar para Documentos
+</a>
+{% endblock %}
