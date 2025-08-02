@@ -1,11 +1,308 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web-Integrity</title>
+    <title>DocIntegrity - Análise de Documentos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+                top: 0;
+                left: 0;
+            }
+            .sidebar-open {
+                transform: translateX(0);
+            }
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 40;
+                display: none;
+            }
+            .overlay-open {
+                display: block;
+            }
+        }
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body>
-    {%block %}
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Overlay for mobile sidebar -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <button id="sidebarToggle" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h1 class="text-xl font-bold">DocIntegrity</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:inline">Bem-vindo, <span class="font-semibold">Usuário</span></span>
+                <button class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md flex items-center space-x-2 transition">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Seus Documentos</span>
+                </button>
+                <div class="w-10 h-10 rounded-full bg-blue-800 flex items-center justify-center">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        {%block header%}
+        {%endblock%}
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar bg-white w-64 shadow-md md:shadow-none">
+            <div class="p-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-md bg-blue-50 text-blue-700">
+                            <i class="fas fa-folder-open w-5 text-center"></i>
+                            <span>Ver Meus Documentos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-plus-circle w-5 text-center"></i>
+                            <span>Cadastrar Documentos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-spell-check w-5 text-center"></i>
+                            <span>Atualizar Grafia</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-link w-5 text-center"></i>
+                            <span>Integrações com Contas Públicas</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t mt-auto">
+                <div class="text-sm text-gray-500">
+                    <p>DocIntegrity v1.0</p>
+                    <p>© 2023 Todos os direitos reservados</p>
+                </div>
+            </div>
+        </aside>
+
+        
+        <main class="flex-1 p-6">
+        {%block content%}
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Análise de Integridade de Documentos</h2>
+                    <p class="text-gray-600">Verifique a autenticidade e integridade dos seus documentos físicos</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Document Card 1 -->
+                    <div class="document-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">Válido</div>
+                                <i class="fas fa-file-pdf text-red-500 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">Contrato de Locação</h3>
+                            <p class="text-sm text-gray-500 mb-3">Registrado em 15/03/2023</p>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-500">Última verificação:</p>
+                                    <p class="text-sm font-medium">Hoje, 14:30</p>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                    Detalhes <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Card 2 -->
+                    <div class="document-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium">Pendente</div>
+                                <i class="fas fa-file-image text-blue-500 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">RG Digitalizado</h3>
+                            <p class="text-sm text-gray-500 mb-3">Registrado em 10/02/2023</p>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-500">Última verificação:</p>
+                                    <p class="text-sm font-medium">Ontem, 09:15</p>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                    Detalhes <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Card 3 -->
+                    <div class="document-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-medium">Inválido</div>
+                                <i class="fas fa-file-word text-blue-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">Declaração de Imposto</h3>
+                            <p class="text-sm text-gray-500 mb-3">Registrado em 05/01/2023</p>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-500">Última verificação:</p>
+                                    <p class="text-sm font-medium">05/04/2023</p>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                    Detalhes <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Section -->
+                <div class="mt-12 bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Análise de Integridade</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-base font-medium text-gray-800">Verificação de Autenticidade</h4>
+                                <p class="text-sm text-gray-600 mt-1">Sistema verifica assinaturas, selos e marcas d'água contra bancos de dados oficiais.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-search text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-base font-medium text-gray-800">Análise de Alterações</h4>
+                                <p class="text-sm text-gray-600 mt-1">Detecta adulterações, rasuras ou modificações não autorizadas no documento.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-base font-medium text-gray-800">Proteção contra Fraude</h4>
+                                <p class="text-sm text-gray-600 mt-1">Compara padrões de segurança com modelos oficiais para identificar falsificações.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Nova Análise</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {%endblock%}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">DocIntegrity</h3>
+                    <p class="text-gray-400 text-sm">Solução completa para análise e verificação da integridade de documentos físicos.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-4">Recursos</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Verificação de Documentos</a></li>
+                        <li><a href="#" class="hover:text-white">Histórico de Análises</a></li>
+                        <li><a href="#" class="hover:text-white">Relatórios Detalhados</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-4">Ajuda</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Central de Ajuda</a></li>
+                        <li><a href="#" class="hover:text-white">Tutoriais</a></li>
+                        <li><a href="#" class="hover:text-white">Contato</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Termos de Uso</a></li>
+                        <li><a href="#" class="hover:text-white">Política de Privacidade</a></li>
+                        <li><a href="#" class="hover:text-white">LGPD</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-sm text-gray-400 text-center">
+                <p>© 2023 DocIntegrity. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open');
+            overlay.classList.toggle('overlay-open');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('overlay-open');
+        });
+
+        // Simulate document analysis (just for demo)
+        document.querySelectorAll('.document-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const status = this.querySelector('div:first-child').textContent.trim();
+                let message = '';
+                
+                if(status === 'Válido') {
+                    message = 'Este documento foi verificado e está íntegro.';
+                } else if(status === 'Pendente') {
+                    message = 'Análise em andamento. Por favor, aguarde.';
+                } else {
+                    message = 'Foram detectadas possíveis irregularidades neste documento.';
+                }
+                
+                alert(message);
+            });
+        });
+    </script>
 </body>
 </html>
