@@ -12,6 +12,7 @@ class Usuario(models.Model):
     ]
 
     nome_usuario = models.CharField(max_length=100)
+    sobrenome_usuario = models.CharField(max_length=100, blank=True)
     email_usuario = models.EmailField(unique=True)
     senha_hash = models.CharField(max_length=255)
     funcao = models.CharField(max_length=10, choices=FUNCOES, default='usuario')
@@ -31,7 +32,7 @@ class Documento(models.Model):
 
     titulo = models.CharField(max_length=200)
     descricao = models.TextField(blank=True)
-    caminho_arquivo = models.CharField(max_length=255)
+    caminho_arquivo = models.FileField(upload_to='documentos/')  # Aqui está o segredo
     hash_arquivo = models.CharField(max_length=128)
     usuario_dono = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='documentos_enviados')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='enviado')
